@@ -1,0 +1,234 @@
+
+{% extends "base.html" %}
+
+{% block title %}{{ comparison.title }} | ChoiceCraft{% endblock %}
+
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-heading">
+    <div>
+        <span class="eyebrow">COMPARISON REPORT</span>
+        <h1>{{ comparison.title }}</h1>
+        <p>Recommended result and detailed evaluation.</p>
+    </div>
+
+    <div class="heading-actions">
+        <a class="btn secondary" href="{{ url_for('dashboard') }}">
+            Dashboard
+        </a>
+
+        <a class="btn secondary"
+           href="{{ url_for('edit_comparison', comparison_id=comparison.id) }}">
+            Edit
+        </a>
+
+        <a class="btn primary"
+           href="{{ url_for('export_csv', comparison_id=comparison.id) }}">
+            Export CSV
+        </a>
+    </div>
+</div>
+
+<section class="winner-banner">
+    <div>
+        <span class="eyebrow">RECOMMENDED ALTERNATIVE</span>
+        <h2>{{ comparison.winner }}</h2>
+        <p>{{ comparison.explanation }}</p>
+    </div>
+</section>
+
+<section class="section-card">
+
+    <h2>Overall Ranking</h2>
+
+    <div class="chart-wrap">
+        <canvas id="score-chart"></canvas>
+    </div>
+
+    <div class="table-scroll">
+
+        <table class="data-table">
+
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Alternative</th>
+                    <th>Weighted Score</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for result in comparison.results %}
+
+                <tr>
+                    <td>{{ result.rank }}</td>
+
+                    <td>
+                        {{ result.name }}
+
+                        {% if result.rank == 1 %}
+                            <span class="winner-tag">Recommended</span>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ "%.3f"|format(result.score) }}/10</td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+<section class="section-card">
+
+    <h2>Detailed Criterion Ratings</h2>
+
+    <div class="table-scroll">
+
+        <table class="data-table">
+
+            <thead>
+                <tr>
+                    <th>Alternative</th>
+
+                    {% for criterion in comparison.criteria %}
+                    <th>
+                        {{ criterion.name }}
+                        <small>
+                            {{ criterion.kind|title }}
+                            · {{ "%.1f"|format(criterion.normalized_weight * 100) }}%
+                        </small>
+                    </th>
+                    {% endfor %}
+
+                    <th>Total</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for result in comparison.results %}
+
+                <tr>
+                    <td>{{ result.name }}</td>
+
+                    {% for rating in result.ratings %}
+                    <td>
+                        {{ "%.2f"|format(rating) }}
+                        <small>
+                            Contribution:
+                            {{ "%.3f"|format(result.contributions[loop.index0]) }}
+                        </small>
+                    </td>
+                    {% endfor %}
+
+                    <td>{{ "%.3f"|format(result.score) }}</td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+<section class="section-card">
+
+    <h2>Original Specifications</h2>
+
+    <div class="table-scroll">
+
+        <table class="data-table">
+
+            <thead>
+                <tr>
+                    <th>Alternative</th>
+                    {% for criterion in comparison.criteria %}
+                    <th>{{ criterion.name }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for alternative in comparison.alternatives %}
+                <tr>
+                    <td>{{ alternative.name }}</td>
+
+                    {% for value in alternative['values'] %}
+                    <td>{{ value }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+
+const chartLabels = {{ comparison.results|map(attribute='name')|list|tojson }};
+const chartScores = {{ comparison.results|map(attribute='score')|list|tojson }};
+
+new Chart(document.getElementById("score-chart"), {
+
+    type: "bar",
+
+    data: {
+        labels: chartLabels,
+
+        datasets: [{
+            label: "Weighted Score",
+            data: chartScores,
+            borderWidth: 1,
+            borderRadius: 7
+        }]
+    },
+
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: "y",
+
+        scales: {
+            x: {
+                min: 0,
+                max: 10,
+                title: {
+                    display: true,
+                    text: "Score out of 10"
+                }
+            }
+        },
+
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    }
+
+});
+
+</script>
+
+{% endblock %}

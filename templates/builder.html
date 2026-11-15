@@ -1,0 +1,136 @@
+
+{% extends "base.html" %}
+
+{% block title %}Comparison Builder | ChoiceCraft{% endblock %}
+
+{% block content %}
+
+<div class="page-heading">
+    <div>
+        <span class="eyebrow">DECISION BUILDER</span>
+        <h1>{{ 'Edit Comparison' if comparison else 'New Comparison' }}</h1>
+        <p>Add 2–10 alternatives and 2–8 criteria.</p>
+    </div>
+
+    <a class="btn secondary" href="{{ url_for('dashboard') }}">
+        Dashboard
+    </a>
+</div>
+
+<div class="builder-layout">
+
+    <section>
+
+        <div class="section-card">
+            <h2>1. Comparison Details</h2>
+
+            <label>Comparison Title</label>
+            <input
+                id="comparison-title"
+                placeholder="Example: Best Laptop for College"
+                maxlength="100"
+            >
+        </div>
+
+        <div class="section-card">
+
+            <div class="section-title-row">
+                <h2>2. Define Criteria</h2>
+
+                <button class="btn secondary small"
+                        id="add-criterion"
+                        type="button">
+                    + Add Criterion
+                </button>
+            </div>
+
+            <p class="muted">
+                Assign a weight and select Benefit or Cost.
+            </p>
+
+            <div id="criteria-list"></div>
+
+        </div>
+
+        <div class="section-card">
+
+            <div class="section-title-row">
+                <h2>3. Add Alternatives</h2>
+
+                <button class="btn secondary small"
+                        id="add-alternative"
+                        type="button">
+                    + Add Alternative
+                </button>
+            </div>
+
+            <p class="muted">
+                Enter numeric specifications for every criterion.
+            </p>
+
+            <div id="alternatives-list"></div>
+
+        </div>
+
+        <div class="builder-actions">
+
+            <button class="btn primary"
+                    id="calculate-save"
+                    type="button">
+                Calculate and Save
+            </button>
+
+            <span id="form-message"></span>
+
+        </div>
+
+    </section>
+
+    <aside class="help-card">
+
+        <h3>How ChoiceCraft works</h3>
+
+        <p>
+            <b>Benefit:</b>
+            Higher values receive higher ratings.
+        </p>
+
+        <p>
+            <b>Cost:</b>
+            Lower values receive higher ratings.
+        </p>
+
+        <p>
+            <b>Weighted score:</b>
+            Rating multiplied by normalized criterion weight.
+        </p>
+
+        <p class="formula">
+            Rating scale: 1–10
+        </p>
+
+        <p class="muted">
+            Ratings are generated from the specifications
+            entered by the user. Live external data is not fetched.
+        </p>
+
+        <button class="text-button"
+                id="load-sample"
+                type="button">
+            Load Sample Data
+        </button>
+
+    </aside>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+window.CHOICECRAFT_INITIAL =
+    {{ comparison|tojson if comparison else 'null' }};
+</script>
+
+{% endblock %}

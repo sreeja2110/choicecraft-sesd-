@@ -1,0 +1,85 @@
+
+{% extends "base.html" %}
+
+{% block title %}ChoiceCraft | Home{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+
+    <div>
+        <span class="eyebrow">SMART DECISION SUPPORT</span>
+
+        <h1>
+            Make complex choices
+            <span>feel simple.</span>
+        </h1>
+
+        <p>
+            Compare alternatives using important criteria.
+            ChoiceCraft automatically evaluates specifications,
+            calculates scores, ranks options and recommends
+            the best alternative.
+        </p>
+
+        <div class="hero-actions">
+            <a class="btn primary" href="{{ url_for('register') }}">
+                Get Started
+            </a>
+
+            <a class="btn secondary" href="{{ url_for('login') }}">
+                Login
+            </a>
+        </div>
+    </div>
+
+    <div class="hero-panel">
+        <span class="eyebrow">DECISION PREVIEW</span>
+        <h2>Compare your options</h2>
+
+        <div class="preview-row">
+            <span>Option A</span>
+            <div class="meter"><i style="width:75%"></i></div>
+            <b>7.5</b>
+        </div>
+
+        <div class="preview-row">
+            <span>Option B</span>
+            <div class="meter"><i style="width:92%"></i></div>
+            <b>9.2</b>
+        </div>
+
+        <div class="preview-row">
+            <span>Option C</span>
+            <div class="meter"><i style="width:65%"></i></div>
+            <b>6.5</b>
+        </div>
+
+        <p class="winner-note">
+            ★ Option B is the top-ranked option
+        </p>
+        <small>Illustrative preview scores only.</small>
+    </div>
+
+</section>
+
+<section class="feature-grid">
+
+    <article class="feature">
+        <h3>01. Define Criteria</h3>
+        <p>Choose criteria and assign importance weights.</p>
+    </article>
+
+    <article class="feature">
+        <h3>02. Compare Alternatives</h3>
+        <p>Enter specifications for the options you want to compare.</p>
+    </article>
+
+    <article class="feature">
+        <h3>03. Get Recommendations</h3>
+        <p>View automatic ratings, rankings and comparison charts.</p>
+    </article>
+
+</section>
+
+{% endblock %}
